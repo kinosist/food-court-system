@@ -12,8 +12,8 @@ export const NumberProvider = ({ children }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // 本番環境では環境変数を使用してURLを設定
-    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000';
+    // 環境変数が設定されていればそれを使用し、なければ相対パスで接続
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || '';
     socket = io(socketUrl);
 
     socket.on('update', ({ waitingNumbers, receivedNumbers }) => {
@@ -58,7 +58,7 @@ export const NumberProvider = ({ children }) => {
         receivedNumbers,
         issueNumber,
         moveToReceived,
-        moveToWaiting, // 追加
+        moveToWaiting,
         addNumber,
         deleteNumber,
         error,

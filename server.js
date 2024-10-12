@@ -16,7 +16,7 @@ app.prepare().then(() => {
 
   const io = socketIo(server, {
     cors: {
-      origin: "*", // セキュリティ上、本番環境では適切なオリジンを指定してください
+      origin: "*",
       methods: ["GET", "POST"]
     }
   });
@@ -32,19 +32,10 @@ app.prepare().then(() => {
 
     // 番号発行イベント
     socket.on('issueNumber', () => {
-      // 全ての番号を結合
       const allNumbers = waitingNumbers.concat(receivedNumbers);
-      
-      // 最大番号を取得
       const maxNumber = allNumbers.length > 0 ? Math.max(...allNumbers) : 0;
-      
-      // 新しい番号を設定
       const newNumber = maxNumber + 1;
-      
-      // 新しい番号を待ち番号リストに追加
       waitingNumbers.push(newNumber);
-      
-      // クライアントに更新を通知
       io.emit('update', { waitingNumbers, receivedNumbers });
     });
 
