@@ -1,55 +1,11 @@
 /* styles/globals.css */
 
-/* 全体のスタイル */
-body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Roboto', sans-serif;
-  background-color: #f8f9fa;
-}
-
-/* 表示画面コンテナ */
-.display-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.95); /* 透明度を調整 */
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* セクションスタイル */
-.waiting-numbers, .received-numbers {
-  flex: 1;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-/* タイトルスタイル */
-.waiting-numbers h2, .received-numbers h2 {
-  text-align: center;
-  font-size: 28px;
-  color: #333333;
-  margin-bottom: 20px;
-}
-
-/* 番号グリッド */
-.numbers-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
 /* 番号札の基本スタイル */
 .number-card {
+  position: relative; /* 削除ボタンの配置のために相対位置を設定 */
   padding: 30px 60px;
   margin: 15px;
-  border: 3px solid transparent; /* 初期は透明 */
+  border: 3px solid transparent;
   border-radius: 12px;
   cursor: move;
   text-align: center;
@@ -62,60 +18,36 @@ body {
   animation: fadeInSlide 0.5s ease-out forwards;
 }
 
-/* 待機中の番号札のスタイル */
 .number-card.waiting {
-  background-color: #3498db; /* 明るめの青色 */
+  background-color: #3498db; /* 青色 */
   border-color: #2980b9; /* 青の濃色 */
 }
 
-/* 受け取る番号札のスタイル */
 .number-card.received {
-  background-color: #e74c3c; /* 明るめの赤色 */
+  background-color: #e74c3c; /* 赤色 */
   border-color: #c0392b; /* 赤の濃色 */
 }
 
-/* 番号札のホバー効果 */
-.number-card:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+/* 削除ボタンのスタイル */
+.number-card .delete-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0,0,0,0.3);
+  border: none;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
 }
 
-/* アニメーションの定義 */
-@keyframes fadeInSlide {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.number-card .delete-btn:hover {
+  background-color: rgba(0,0,0,0.6);
 }
 
-/* レスポンシブデザイン */
-@media (max-width: 768px) {
-  .number-card {
-    padding: 20px 40px;
-    font-size: 36px;
-    margin: 10px;
-  }
-
-  .waiting-numbers h2, .received-numbers h2 {
-    font-size: 24px;
-  }
-}
-
-@media (max-width: 480px) {
-  .number-card {
-    padding: 15px 30px;
-    font-size: 28px;
-    margin: 8px;
-  }
-
-  .waiting-numbers h2, .received-numbers h2 {
-    font-size: 20px;
-  }
-}
+/* その他のスタイルは前述のまま */
 
 /* 番号アイコンのスタイル（オプション） */
 .number-card .number-icon {

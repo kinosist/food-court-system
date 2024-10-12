@@ -8,7 +8,7 @@ const ItemTypes = {
   NUMBER: 'number',
 };
 
-const NumberCard = ({ number, status }) => {
+const NumberCard = ({ number, status, onDelete }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.NUMBER,
     item: { number },
@@ -28,12 +28,15 @@ const NumberCard = ({ number, status }) => {
       {/* アイコンを追加する場合は以下の行のコメントを外してください */}
       {/* <img src="/icons/number-icon.png" alt="番号アイコン" className="number-icon" /> */}
       番号 {number}
+      <button className="delete-btn" onClick={() => onDelete(number)}>
+        削除
+      </button>
     </div>
   );
 };
 
 const AdminScreen = () => {
-  const { waitingNumbers, receivedNumbers, issueNumber, moveToReceived, addNumber, error } = useContext(NumberContext);
+  const { waitingNumbers, receivedNumbers, issueNumber, moveToReceived, addNumber, deleteNumber, error } = useContext(NumberContext);
   const [manualNumber, setManualNumber] = useState('');
 
   const [, drop] = useDrop({
@@ -55,6 +58,12 @@ const AdminScreen = () => {
     }
     addNumber(number);
     setManualNumber('');
+  };
+
+  const handleDelete = (number) => {
+    if (window.confirm(`番号 ${number} を削除してもよろしいですか？`)) {
+      deleteNumber(number);
+    }
   };
 
   return (
@@ -82,10 +91,15 @@ const AdminScreen = () => {
       <div className="admin-numbers">
         {/* 待機中の番号 */}
         <div className="waiting-numbers">
-          <h2>待っている番号</h2>
+          <h2>お待ちのお客様</h2>
           <div className="numbers-grid">
             {waitingNumbers.map((number) => (
-              <NumberCard key={number} number={number} status="waiting" />
+              <NumberCard
+                key={number}
+                number={number}
+                status="waiting"
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         </div>
@@ -95,10 +109,15 @@ const AdminScreen = () => {
           ref={drop}
           className="received-numbers"
         >
-          <h2>食事が受け取れる番号</h2>
+          <h2>受取り可能！</h2>
           <div className="numbers-grid">
             {receivedNumbers.map((number) => (
-              <NumberCard key={number} number={number} status="received" />
+              <NumberCard
+                key={number}
+                number={number}
+                status="received"
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         </div>

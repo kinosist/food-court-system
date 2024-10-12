@@ -49,6 +49,25 @@ app.prepare().then(() => {
       io.emit('update', { waitingNumbers, receivedNumbers });
     });
 
+    // 新しく追加: deleteNumber イベントのハンドリング
+    socket.on('deleteNumber', (number) => {
+      let deleted = false;
+
+      if (waitingNumbers.includes(number)) {
+        waitingNumbers = waitingNumbers.filter((n) => n !== number);
+        deleted = true;
+      } else if (receivedNumbers.includes(number)) {
+        receivedNumbers = receivedNumbers.filter((n) => n !== number);
+        deleted = true;
+      }
+
+      if (deleted) {
+        io.emit('update', { waitingNumbers, receivedNumbers });
+      } else {
+        socket.emit('error', `番号 ${number} は存在しません`);
+      }
+    });
+
     socket.on('moveToReceived', (number) => {
       if (waitingNumbers.includes(number)) {
         waitingNumbers = waitingNumbers.filter((n) => n !== number);
@@ -65,7 +84,6 @@ app.prepare().then(() => {
   });
 
   const PORT = process.env.PORT || 3000;
-  // `0.0.0.0` にバインドして、全てのネットワークインターフェースからの接続を許可
   server.listen(PORT, '0.0.0.0', (err) => {
     if (err) throw err;
     console.log(`> Ready on http://localhost:${PORT}`);

@@ -46,7 +46,7 @@ const DisplayScreen = () => {
     <div className="display-container">
       {/* 待機中の番号 */}
       <div className="waiting-numbers">
-        <h2>待ち番号</h2>
+        <h2>お待ちのお客様</h2>
         <div className="numbers-grid">
           {waitingNumbers.map((number) => (
             <NumberCard key={number} number={number} status="waiting" />
