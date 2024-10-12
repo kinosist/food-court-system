@@ -25,6 +25,8 @@ const NumberCard = ({ number, status }) => {
         opacity: isDragging ? 0.7 : 1,
       }}
     >
+      {/* アイコンを追加する場合は以下の行のコメントを外してください */}
+      {/* <img src="/icons/number-icon.png" alt="番号アイコン" className="number-icon" /> */}
       番号 {number}
     </div>
   );

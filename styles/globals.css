@@ -59,19 +59,19 @@ body {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s, box-shadow 0.3s, opacity 0.5s;
   opacity: 0;
-  animation: fadeIn 1s forwards;
+  animation: fadeInSlide 0.5s ease-out forwards;
 }
 
 /* 待機中の番号札のスタイル */
 .number-card.waiting {
-  background-color: #007bff; /* 青色 */
-  border-color: #0056b3; /* 青の濃色 */
+  background-color: #3498db; /* 明るめの青色 */
+  border-color: #2980b9; /* 青の濃色 */
 }
 
 /* 受け取る番号札のスタイル */
 .number-card.received {
-  background-color: #dc3545; /* 赤色 */
-  border-color: #c82333; /* 赤の濃色 */
+  background-color: #e74c3c; /* 明るめの赤色 */
+  border-color: #c0392b; /* 赤の濃色 */
 }
 
 /* 番号札のホバー効果 */
@@ -81,9 +81,14 @@ body {
 }
 
 /* アニメーションの定義 */
-@keyframes fadeIn {
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -110,4 +115,11 @@ body {
   .waiting-numbers h2, .received-numbers h2 {
     font-size: 20px;
   }
+}
+
+/* 番号アイコンのスタイル（オプション） */
+.number-card .number-icon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
 }
