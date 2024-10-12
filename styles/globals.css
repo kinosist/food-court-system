@@ -1,0 +1,98 @@
+/* styles/globals.css */
+
+/* 全体のスタイル */
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+  }
+  
+  /* 表示画面コンテナ */
+  .display-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+  }
+  
+  /* セクションスタイル */
+  .waiting-numbers, .received-numbers {
+    flex: 1;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  /* タイトルスタイル */
+  .waiting-numbers h2, .received-numbers h2 {
+    text-align: center;
+    font-size: 28px;
+    color: #333333;
+    margin-bottom: 20px;
+  }
+  
+  /* 番号グリッド */
+  .numbers-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  /* 番号札の基本スタイル */
+  .number-card {
+    padding: 30px 60px;
+    margin: 15px;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    border: 3px solid #ff7e5f;
+    border-radius: 12px;
+    cursor: move;
+    text-align: center;
+    font-size: 48px;
+    font-weight: bold;
+    color: #ffffff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  /* 受け取る番号札のスタイル */
+  .number-card.received {
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    border: 3px solid #6dd5ed;
+    color: #ffffff;
+  }
+  
+  /* 番号札のホバー効果 */
+  .number-card:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* レスポンシブデザイン */
+  @media (max-width: 768px) {
+    .number-card {
+      padding: 20px 40px;
+      font-size: 36px;
+      margin: 10px;
+    }
+  
+    .waiting-numbers h2, .received-numbers h2 {
+      font-size: 24px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .number-card {
+      padding: 15px 30px;
+      font-size: 28px;
+      margin: 8px;
+    }
+  
+    .waiting-numbers h2, .received-numbers h2 {
+      font-size: 20px;
+    }
+  }
+  
