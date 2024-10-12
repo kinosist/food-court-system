@@ -8,7 +8,7 @@ const ItemTypes = {
   NUMBER: 'number',
 };
 
-const NumberCard = ({ number }) => {
+const NumberCard = ({ number, status }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.NUMBER,
     item: { number },
@@ -20,7 +20,7 @@ const NumberCard = ({ number }) => {
   return (
     <div
       ref={drag}
-      className="number-card"
+      className={`number-card ${status}`}
       style={{
         opacity: isDragging ? 0.7 : 1,
       }}
@@ -47,7 +47,7 @@ const DisplayScreen = () => {
         <h2>待ち番号</h2>
         <div className="numbers-grid">
           {waitingNumbers.map((number) => (
-            <NumberCard key={number} number={number} />
+            <NumberCard key={number} number={number} status="waiting" />
           ))}
         </div>
       </div>
@@ -60,9 +60,7 @@ const DisplayScreen = () => {
         <h2>受取り可能！</h2>
         <div className="numbers-grid">
           {receivedNumbers.map((number) => (
-            <div key={number} className="number-card received">
-              番号 {number}
-            </div>
+            <NumberCard key={number} number={number} status="received" />
           ))}
         </div>
       </div>
