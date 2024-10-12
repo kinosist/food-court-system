@@ -30,12 +30,25 @@ app.prepare().then(() => {
     // 現在の状態を送信
     socket.emit('update', { waitingNumbers, receivedNumbers });
 
+    // 番号発行イベント
     socket.on('issueNumber', () => {
-      const newNumber = waitingNumbers.length + 1;
+      // 全ての番号を結合
+      const allNumbers = waitingNumbers.concat(receivedNumbers);
+      
+      // 最大番号を取得
+      const maxNumber = allNumbers.length > 0 ? Math.max(...allNumbers) : 0;
+      
+      // 新しい番号を設定
+      const newNumber = maxNumber + 1;
+      
+      // 新しい番号を待ち番号リストに追加
       waitingNumbers.push(newNumber);
+      
+      // クライアントに更新を通知
       io.emit('update', { waitingNumbers, receivedNumbers });
     });
 
+    // 手動で番号を追加するイベント
     socket.on('addNumber', (number) => {
       if (typeof number !== 'number' || number <= 0) {
         socket.emit('error', '有効な番号を入力してください');
@@ -49,7 +62,7 @@ app.prepare().then(() => {
       io.emit('update', { waitingNumbers, receivedNumbers });
     });
 
-    // 新しく追加: deleteNumber イベントのハンドリング
+    // 番号削除イベント
     socket.on('deleteNumber', (number) => {
       let deleted = false;
 
@@ -68,13 +81,25 @@ app.prepare().then(() => {
       }
     });
 
+    // 番号を受け取り可能リストに移動するイベント
     socket.on('moveToReceived', (number) => {
       if (waitingNumbers.includes(number)) {
         waitingNumbers = waitingNumbers.filter((n) => n !== number);
         receivedNumbers.push(number);
         io.emit('update', { waitingNumbers, receivedNumbers });
       } else {
-        socket.emit('error', `番号 ${number} は待機中のリストに存在しません`);
+        socket.emit('error', `番号 ${number} は待ち番号リストに存在しません`);
+      }
+    });
+
+    // 番号を待ち番号リストに移動するイベント
+    socket.on('moveToWaiting', (number) => {
+      if (receivedNumbers.includes(number)) {
+        receivedNumbers = receivedNumbers.filter((n) => n !== number);
+        waitingNumbers.push(number);
+        io.emit('update', { waitingNumbers, receivedNumbers });
+      } else {
+        socket.emit('error', `番号 ${number} は受け取り可能リストに存在しません`);
       }
     });
 

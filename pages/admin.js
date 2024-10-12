@@ -1,49 +1,48 @@
 // pages/admin.js
-import { useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { NumberContext } from '../context/NumberContext';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import NumberCard from '../components/NumberCard';
+import { useDrop } from 'react-dnd';
 
 const ItemTypes = {
   NUMBER: 'number',
 };
 
-const NumberCard = ({ number, status, onDelete }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: ItemTypes.NUMBER,
-    item: { number },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
-
-  return (
-    <div
-      ref={drag}
-      className={`number-card ${status}`}
-      style={{
-        opacity: isDragging ? 0.7 : 1,
-      }}
-    >
-      {/* アイコンを追加する場合は以下の行のコメントを外してください */}
-      {/* <img src="/icons/number-icon.png" alt="番号アイコン" className="number-icon" /> */}
-      番号 {number}
-      <button className="delete-btn" onClick={() => onDelete(number)}>
-        削除
-      </button>
-    </div>
-  );
-};
-
 const AdminScreen = () => {
-  const { waitingNumbers, receivedNumbers, issueNumber, moveToReceived, addNumber, deleteNumber, error } = useContext(NumberContext);
+  const {
+    waitingNumbers,
+    receivedNumbers,
+    issueNumber,
+    moveToReceived,
+    moveToWaiting,
+    addNumber,
+    deleteNumber,
+    error,
+  } = useContext(NumberContext);
   const [manualNumber, setManualNumber] = useState('');
 
-  const [, drop] = useDrop({
+  // 「受け取り可能！」エリアへのドロップ設定
+  const [{ isOverReceived, canDropReceived }, dropReceived] = useDrop({
     accept: ItemTypes.NUMBER,
     drop: (item) => {
       moveToReceived(item.number);
     },
+    collect: (monitor) => ({
+      isOverReceived: !!monitor.isOver(),
+      canDropReceived: !!monitor.canDrop(),
+    }),
+  });
+
+  // 「待ち番号」エリアへのドロップ設定
+  const [{ isOverWaiting, canDropWaiting }, dropWaiting] = useDrop({
+    accept: ItemTypes.NUMBER,
+    drop: (item) => {
+      moveToWaiting(item.number);
+    },
+    collect: (monitor) => ({
+      isOverWaiting: !!monitor.isOver(),
+      canDropWaiting: !!monitor.canDrop(),
+    }),
   });
 
   const handleIssue = () => {
@@ -89,9 +88,9 @@ const AdminScreen = () => {
       </div>
 
       <div className="admin-numbers">
-        {/* 待機中の番号 */}
-        <div className="waiting-numbers">
-          <h2>お待ちのお客様</h2>
+        {/* 待ち番号 */}
+        <div ref={dropWaiting} className={`waiting-numbers ${isOverWaiting && canDropWaiting ? 'highlight' : ''}`}>
+          <h2>待ち番号</h2>
           <div className="numbers-grid">
             {waitingNumbers.map((number) => (
               <NumberCard
@@ -99,17 +98,15 @@ const AdminScreen = () => {
                 number={number}
                 status="waiting"
                 onDelete={handleDelete}
+                showDelete={true} // 削除ボタンを表示
               />
             ))}
           </div>
         </div>
 
-        {/* 受け取る番号 */}
-        <div
-          ref={drop}
-          className="received-numbers"
-        >
-          <h2>受取り可能！</h2>
+        {/* 受け取り可能！ */}
+        <div ref={dropReceived} className={`received-numbers ${isOverReceived && canDropReceived ? 'highlight' : ''}`}>
+          <h2>受け取り可能！</h2>
           <div className="numbers-grid">
             {receivedNumbers.map((number) => (
               <NumberCard
@@ -117,6 +114,7 @@ const AdminScreen = () => {
                 number={number}
                 status="received"
                 onDelete={handleDelete}
+                showDelete={true} // 削除ボタンを表示
               />
             ))}
           </div>
@@ -127,9 +125,5 @@ const AdminScreen = () => {
 };
 
 export default function Admin() {
-  return (
-    <DndProvider backend={HTML5Backend}>
-      <AdminScreen />
-    </DndProvider>
-  );
+  return <AdminScreen />;
 }

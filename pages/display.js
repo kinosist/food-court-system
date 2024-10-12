@@ -1,68 +1,62 @@
 // pages/display.js
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { NumberContext } from '../context/NumberContext';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import NumberCard from '../components/NumberCard';
+import { useDrop } from 'react-dnd';
 
 const ItemTypes = {
   NUMBER: 'number',
 };
 
-const NumberCard = ({ number, status }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: ItemTypes.NUMBER,
-    item: { number },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
-
-  return (
-    <div
-      ref={drag}
-      className={`number-card ${status}`}
-      style={{
-        opacity: isDragging ? 0.7 : 1,
-      }}
-    >
-      {/* アイコンを追加する場合は以下の行のコメントを外してください */}
-      {/* <img src="/icons/number-icon.png" alt="番号アイコン" className="number-icon" /> */}
-      番号 {number}
-    </div>
-  );
-};
-
 const DisplayScreen = () => {
   const { waitingNumbers, receivedNumbers, moveToReceived } = useContext(NumberContext);
 
-  const [, drop] = useDrop({
+  const [{ isOver, canDrop }, drop] = useDrop({
     accept: ItemTypes.NUMBER,
     drop: (item) => {
       moveToReceived(item.number);
     },
+    canDrop: () => false, // ドロップ自体は許可しない場合
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+      canDrop: !!monitor.canDrop(),
+    }),
   });
 
   return (
     <div className="display-container">
-      {/* 待機中の番号 */}
+      {/* 待ち番号 */}
       <div className="waiting-numbers">
-        <h2>お待ちのお客様</h2>
+        <h2>待ち番号</h2>
         <div className="numbers-grid">
           {waitingNumbers.map((number) => (
-            <NumberCard key={number} number={number} status="waiting" />
+            <NumberCard
+              key={number}
+              number={number}
+              status="waiting"
+              showDelete={false} // 削除ボタンを非表示
+              draggable={false}  // ドラッグを無効化
+            />
           ))}
         </div>
       </div>
 
-      {/* 受け取る番号 */}
+      {/* 受け取り可能！ */}
       <div
         ref={drop}
-        className="received-numbers"
+        className={`received-numbers ${isOver && canDrop ? 'highlight' : ''}`}
+        style={{ pointerEvents: 'none' }} // ユーザーからの操作を無効化
       >
-        <h2>受取り可能！</h2>
+        <h2>受け取り可能！</h2>
         <div className="numbers-grid">
           {receivedNumbers.map((number) => (
-            <NumberCard key={number} number={number} status="received" />
+            <NumberCard
+              key={number}
+              number={number}
+              status="received"
+              showDelete={false} // 削除ボタンを非表示
+              draggable={false}  // ドラッグを無効化
+            />
           ))}
         </div>
       </div>
@@ -71,9 +65,5 @@ const DisplayScreen = () => {
 };
 
 export default function Display() {
-  return (
-    <DndProvider backend={HTML5Backend}>
-      <DisplayScreen />
-    </DndProvider>
-  );
+  return <DisplayScreen />;
 }

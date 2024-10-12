@@ -12,8 +12,9 @@ export const NumberProvider = ({ children }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Socket.IOサーバーのURLに置き換えてください（例: 'http://localhost:3000'）
-    socket = io('http://localhost:3000'); // デプロイ時は適切なURLに変更
+    // 本番環境では環境変数を使用してURLを設定
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000';
+    socket = io(socketUrl);
 
     socket.on('update', ({ waitingNumbers, receivedNumbers }) => {
       setWaitingNumbers(waitingNumbers);
@@ -38,11 +39,14 @@ export const NumberProvider = ({ children }) => {
     socket.emit('moveToReceived', number);
   };
 
+  const moveToWaiting = (number) => {
+    socket.emit('moveToWaiting', number);
+  };
+
   const addNumber = (number) => {
     socket.emit('addNumber', number);
   };
 
-  // 新しく追加: deleteNumber 関数
   const deleteNumber = (number) => {
     socket.emit('deleteNumber', number);
   };
@@ -54,8 +58,9 @@ export const NumberProvider = ({ children }) => {
         receivedNumbers,
         issueNumber,
         moveToReceived,
+        moveToWaiting, // 追加
         addNumber,
-        deleteNumber, // 追加
+        deleteNumber,
         error,
       }}
     >
